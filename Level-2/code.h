@@ -40,10 +40,16 @@ user_account* create_user_account(bool isAdmin, const char* username) {
     return ua;
 }
 
+long positive_modulo(long i, long n) {
+    return (i % n + n) % n;
+}
+
 bool update_setting(user_account* ua, const char *index, const char *value) {
     char *endptr;
     long i, v;
     i = strtol(index, &endptr, 10);
+    // Negative index will change other fields in the struct, hence we need to normalize calculating the positive modulo
+    i = positive_modulo(i, SETTINGS_COUNT);
     if (*endptr)
         return false;
     if (i >= SETTINGS_COUNT)
