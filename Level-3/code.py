@@ -24,7 +24,7 @@ class TaxPayer:
             pass
         
         # defends against path traversal attacks
-        if path.startswith('/') or path.startswith('..'):
+        if path.startswith('/') or '..' in path:
             return None
         
         # builds path
