@@ -23,8 +23,8 @@ class TaxPayer:
         if not path:
             pass
         
-        # defends against path traversal attacks
-        if path.startswith('/') or '..' in path:
+        path = safe_path(path)
+        if not path:
             return None
         
         # builds path
@@ -40,12 +40,12 @@ class TaxPayer:
     # returns the path of an attached tax form that every user should submit
     def get_tax_form_attachment(self, path=None):
         tax_data = None
-        
-        if not path:
-            raise Exception("Error: Tax form is required for all users")
 
-        # defends against path traversal attacks
-        if '..' in path:
+        if not path:
+             raise Exception("Error: Tax form is required for all users")
+        
+        path = safe_path(path)
+        if not path:
             return None
 
         with open(path, 'rb') as form:
@@ -53,3 +53,11 @@ class TaxPayer:
 
         # assume that tax data is returned on screen after this
         return path
+
+# defends against path traversal attacks
+def safe_path(path):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.normpath(os.path.join(base_dir, path))
+    if base_dir != os.path.commonpath([base_dir, filepath]):
+        return None
+    return filepath
