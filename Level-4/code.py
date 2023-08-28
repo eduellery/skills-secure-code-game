@@ -75,30 +75,15 @@ class DB_CRUD_ops(object):
             path = os.path.dirname(os.path.abspath(__file__))
             db_path = os.path.join(path, 'level-4.db')
             db_con = con.create_connection(db_path)
-            cur = db_con.cursor() 
             
             res = "[METHOD EXECUTED] get_stock_info\n"
-            query = "SELECT * FROM stocks WHERE symbol = '{0}'".format(stock_symbol)
-            res += "[QUERY] " + query + "\n"
-            
-            # a block list or restricted characters that should not be presented in user-supplied input
-            restricted_chars = ";%&^!#-"
-            # checks if input contains characters from the block list
-            has_restricted_char = any([char in query for char in restricted_chars])
-            # checks if input contains a wrong number of single quotes against SQL injection
-            correct_number_of_single_quotes = query.count("'") == 2
-            
-            # performs the checks for good cyber security and safe software against SQL injection
-            if has_restricted_char or not correct_number_of_single_quotes:
-                # in case you want to sanitize user input, please uncomment the following 2 lines
-                # sanitized_query = query.translate({ord(char):None for char in restricted_chars})
-                # res += "[SANITIZED_QUERY]" + sanitized_query + "\n"
+            cur = db_con.execute("SELECT * FROM stocks WHERE symbol = (?)", (stock_symbol,))
+            res += "[QUERY] SELECT * FROM stocks WHERE symbol = '{0}'\n".format(stock_symbol)
+            results = cur.fetchall()
+            if not results:
                 res += "CONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
             else:
-                cur.execute(query)
-                
-                query_outcome = cur.fetchall()
-                for result in query_outcome:
+                for result in results:
                     res += "[RESULT] " + str(result)
             return res
         
