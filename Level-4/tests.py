@@ -6,7 +6,7 @@ class TestDatabase(unittest.TestCase):
     # tests for correct retrieval of stock info given a symbol
     def test_1(self):
         op = c.DB_CRUD_ops()
-        expected_output = "[METHOD EXECUTED] get_stock_info\n[QUERY] SELECT * FROM stocks WHERE symbol = 'MSFT'\n[RESULT] ('2022-01-06', 'MSFT', 300.0)"
+        expected_output = "[METHOD EXECUTED] get_stock_info\n[QUERY] SELECT * FROM stocks WHERE symbol = ('MSFT')\n[RESULT] ('2022-01-06', 'MSFT', 300.0)"
         actual_output = op.get_stock_info('MSFT')
         self.assertEqual(actual_output, expected_output)
 

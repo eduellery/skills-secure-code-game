@@ -77,8 +77,12 @@ class DB_CRUD_ops(object):
             db_con = con.create_connection(db_path)
             
             res = "[METHOD EXECUTED] get_stock_info\n"
+            def print_query(query):
+                nonlocal res
+                res += '[QUERY] ' + query + '\n'
+            db_con.set_trace_callback(print_query)
+
             cur = db_con.execute("SELECT * FROM stocks WHERE symbol = (?)", (stock_symbol,))
-            res += "[QUERY] SELECT * FROM stocks WHERE symbol = '{0}'\n".format(stock_symbol)
             results = cur.fetchall()
             if not results:
                 res += "CONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
