@@ -13,7 +13,7 @@ class TestDatabase(unittest.TestCase):
     # tests for correct defense against SQLi in the case where a user passes more than one query or restricted characters
     def test_2(self):
         op = c.DB_CRUD_ops()
-        expected_output = "[METHOD EXECUTED] get_stock_info\n[QUERY] SELECT * FROM stocks WHERE symbol = 'MSFT'; UPDATE stocks SET price = '500' WHERE symbol = 'MSFT'--'\nCONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
+        expected_output = "[METHOD EXECUTED] get_stock_info\n[QUERY] SELECT * FROM stocks WHERE symbol = ('MSFT''; UPDATE stocks SET price = ''500'' WHERE symbol = ''MSFT''--')\nCONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
         actual_output = op.get_stock_info("MSFT'; UPDATE stocks SET price = '500' WHERE symbol = 'MSFT'--")
         self.assertEqual(actual_output, expected_output)
 
