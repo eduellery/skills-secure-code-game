@@ -20,7 +20,7 @@ class TestDatabase(unittest.TestCase):
     # tests for correct retrieval of stock price
     def test_3(self):
         op = c.DB_CRUD_ops()
-        expected_output = "[METHOD EXECUTED] get_stock_price\n[QUERY] SELECT price FROM stocks WHERE symbol = 'MSFT'\n[RESULT] (300.0,)\n"
+        expected_output = "[METHOD EXECUTED] get_stock_price\n[QUERY] SELECT price FROM stocks WHERE symbol = ('MSFT')\n[RESULT] (300.0,)"
         actual_output = op.get_stock_price('MSFT')
         self.assertEqual(actual_output, expected_output)
 

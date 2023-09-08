@@ -108,19 +108,20 @@ class DB_CRUD_ops(object):
             path = os.path.dirname(os.path.abspath(__file__))
             db_path = os.path.join(path, 'level-4.db')
             db_con = con.create_connection(db_path)
-            cur = db_con.cursor()
             
             res = "[METHOD EXECUTED] get_stock_price\n"
-            query = "SELECT price FROM stocks WHERE symbol = '" + stock_symbol + "'"
-            res += "[QUERY] " + query + "\n"
-            if ';' in query:
-                res += "[SCRIPT EXECUTION]\n"
-                cur.executescript(query)
+            def print_query(query):
+                nonlocal res
+                res += '[QUERY] ' + query + '\n'
+            db_con.set_trace_callback(print_query)
+
+            cur = db_con.execute("SELECT price FROM stocks WHERE symbol = (?)", (stock_symbol,))
+            results = cur.fetchall()
+            if not results:
+                res += "CONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
             else:
-                cur.execute(query)
-                query_outcome = cur.fetchall()
-                for result in query_outcome:
-                    res += "[RESULT] " + str(result) + "\n"
+                for result in results:
+                    res += "[RESULT] " + str(result)
             return res
                 
         except sqlite3.Error as e:
