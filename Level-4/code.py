@@ -82,7 +82,7 @@ class DB_CRUD_ops(object):
                 res += '[QUERY] ' + query + '\n'
             db_con.set_trace_callback(print_query)
 
-            cur = db_con.execute("SELECT * FROM stocks WHERE symbol = (?)", (stock_symbol,))
+            cur = db_con.execute("SELECT * FROM stocks WHERE symbol = ?", (stock_symbol,))
             results = cur.fetchall()
             if not results:
                 res += "CONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
@@ -115,7 +115,7 @@ class DB_CRUD_ops(object):
                 res += '[QUERY] ' + query + '\n'
             db_con.set_trace_callback(print_query)
 
-            cur = db_con.execute("SELECT price FROM stocks WHERE symbol = (?)", (stock_symbol,))
+            cur = db_con.execute("SELECT price FROM stocks WHERE symbol = ?", (stock_symbol,))
             results = cur.fetchall()
             if not results:
                 res += "CONFIRM THAT THE ABOVE QUERY IS NOT MALICIOUS TO EXECUTE"
@@ -145,15 +145,16 @@ class DB_CRUD_ops(object):
                 raise Exception("ERROR: stock price provided is not a float")
             
             res = "[METHOD EXECUTED] update_stock_price\n"
-            # UPDATE stocks SET price = 310.0 WHERE symbol = 'MSFT'
-            query = "UPDATE stocks SET price = '%d' WHERE symbol = '%s'" % (price, stock_symbol)
-            res += "[QUERY] " + query + "\n"
-            
-            cur.execute(query)
+            def print_query(query):
+                nonlocal res
+                res += '[QUERY] ' + query + '\n'
+            db_con.set_trace_callback(print_query)
+
+            cur = db_con.execute("UPDATE stocks SET price = ? WHERE symbol = ?", (price, stock_symbol))
             db_con.commit()
-            query_outcome = cur.fetchall()
-            for result in query_outcome:
-                res += "[RESULT] " + result
+            results = cur.fetchall()
+            for result in results:
+                res += "[RESULT] " + str(result)
             return res
             
         except sqlite3.Error as e:
